@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
   const blog = blogs.find((blog) => blog.id == params.blogId);
   if (!blog) return notFound();
   if (!fs.existsSync(`./public/opengraph/${blog.id}.png`)) {
-    await fetch("http://localhost:3000/api/generate", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/generate`, {
       method: "POST",
       body: JSON.stringify(blog),
       cache: "no-store",
