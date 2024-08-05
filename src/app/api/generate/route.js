@@ -5,7 +5,6 @@ import fs from "fs";
 export async function POST(req, res) {
   try {
     const { id, title, desc, author, image } = await req.json();
-    console.log(id);
     const canvas = createCanvas(1200, 630);
     const ctx = canvas.getContext("2d");
     const bgColor = "#fff";
