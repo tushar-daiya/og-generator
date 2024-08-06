@@ -3,12 +3,15 @@ import crypto from "crypto";
 import { put } from "@vercel/blob";
 import { loadImage } from "canvas";
 import { createCanvas } from "canvas";
+import path from "path";
 export async function POST(req, res) {
   try {
     const { title, description, author, image } = await req.json();
     if (!title || !description || !author) {
       return new Response("Missing required fields", { status: 400 });
     }
+    const logoPath=path.resolve(process.cwd(),"public/logo.png");
+    const avatarPath=path.resolve(process.cwd(),"public/avatar.png");
     const id = crypto.randomUUID();
     const canvas = createCanvas(1200, 630);
     const ctx = canvas.getContext("2d");
@@ -24,7 +27,7 @@ export async function POST(req, res) {
     if (!image) {
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      const avatar = await loadImage("./public/avatar.png");
+      const avatar = await loadImage(avatarPath);
       ctx.drawImage(avatar, 50, 50, 80, 80);
       ctx.font = `bold ${descSize}px , sans-serif`;
       ctx.fillStyle = lightTextColor;
@@ -72,14 +75,14 @@ export async function POST(req, res) {
       linearGradient.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = linearGradient;
       ctx.fillRect(0, 0, canvas.width, 200);
-      const avatar = await loadImage("./public/avatar.png");
+      const avatar = await loadImage(avatarPath);
       ctx.drawImage(avatar, 50, 50, 80, 80);
       ctx.font = `bold ${descSize}px , sans-serif`;
       ctx.fillStyle = bgColor;
       ctx.fillText(author, 140, descSize + 72);
     }
 
-    const logo = await loadImage("./public/logo.png");
+    const logo = await loadImage(logoPath);
     ctx.drawImage(logo, 1050, 40, 100, 100);
     const blob = await put(`opengraph/${id}.png`, canvas.toBuffer(), {
       access: "public",
