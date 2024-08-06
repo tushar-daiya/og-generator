@@ -4,14 +4,19 @@ import { put } from "@vercel/blob";
 import { loadImage } from "canvas";
 import { createCanvas } from "canvas";
 import path from "path";
+import { registerFont } from "canvas";
 export async function POST(req, res) {
   try {
     const { title, description, author, image } = await req.json();
     if (!title || !description || !author) {
       return new Response("Missing required fields", { status: 400 });
     }
-    const logoPath=path.resolve(process.cwd(),"public/logo.png");
-    const avatarPath=path.resolve(process.cwd(),"public/avatar.png");
+    const logoPath = path.resolve(process.cwd(), "public/logo.png");
+    const avatarPath = path.resolve(process.cwd(), "public/avatar.png");
+    const poppins = path.resolve(process.cwd(), "public/Poppins-Regular.ttf");
+    const poppinsBold = path.resolve(process.cwd(), "public/Poppins-Bold.ttf");
+    registerFont(poppins, { family: "Poppins" });
+    registerFont(poppinsBold, { family: "Poppins", weight: "bold" });
     const id = crypto.randomUUID();
     const canvas = createCanvas(1200, 630);
     const ctx = canvas.getContext("2d");
@@ -29,10 +34,10 @@ export async function POST(req, res) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const avatar = await loadImage(avatarPath);
       ctx.drawImage(avatar, 50, 50, 80, 80);
-      ctx.font = `bold ${descSize}px , sans-serif`;
+      ctx.font = `bold ${descSize}px , Poppins`;
       ctx.fillStyle = lightTextColor;
       ctx.fillText(author, 140, descSize + 72);
-      ctx.font = `bold ${headingSize}px , sans-serif`;
+      ctx.font = `bold ${headingSize}px , Poppins`;
       ctx.fillStyle = textColor;
       const lines = getLines(ctx, title, maxWidth, maxHeadingLines);
       let y = 40 + 100 + headingSize + lineHeight;
@@ -40,7 +45,7 @@ export async function POST(req, res) {
         ctx.fillText(line, 50, y);
         y += headingSize + lineHeight;
       });
-      ctx.font = `normal ${descSize}px , sans-serif`;
+      ctx.font = `normal ${descSize}px , Poppins`;
       ctx.fillStyle = textColor;
       const descLines = getLines(ctx, description, maxWidth, maxDescLines);
       y =
@@ -77,7 +82,7 @@ export async function POST(req, res) {
       ctx.fillRect(0, 0, canvas.width, 200);
       const avatar = await loadImage(avatarPath);
       ctx.drawImage(avatar, 50, 50, 80, 80);
-      ctx.font = `bold ${descSize}px , sans-serif`;
+      ctx.font = `bold ${descSize}px , Poppins`;
       ctx.fillStyle = bgColor;
       ctx.fillText(author, 140, descSize + 72);
     }
