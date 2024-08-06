@@ -3,7 +3,6 @@ import crypto from "crypto";
 import { put } from "@vercel/blob";
 import { loadImage } from "canvas";
 import { createCanvas } from "canvas";
-export const runtime = "edge";
 export async function POST(req, res) {
   try {
     const { title, description, author, image } = await req.json();
