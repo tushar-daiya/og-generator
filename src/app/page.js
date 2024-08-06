@@ -1,19 +1,13 @@
-import { blogs } from "@/data/blogs";
-import Link from "next/link";
+import CreateBlogForm from "../components/CreateBlogForm";
+import BlogList from "../components/BlogList";
 export default function Home() {
   return (
-    <div className="flex flex-col gap-10 items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold text-center">Blogs</h1>
-      <div className="flex flex-wrap gap-4 items-center justify-center">
-        {blogs.map((blog) => {
-          return (
-            <Link href={`/${blog.id}`} key={blog.id}>
-              <div className="max-w-[300px] bg-slate-400 p-4 rounded-lg text-black">
-                <h1>{blog.title}</h1>
-              </div>
-            </Link>
-          );
-        })}
+    <div className="flex mx-10 h-screen">
+      <div className="w-[48%] px-10 py-10 border-r border-gray-300 overflow-y-scroll">
+        <BlogList />
+      </div>
+      <div className="w-[48%] px-10 max-w-xl mx-auto flex flex-col justify-center">
+        <CreateBlogForm />
       </div>
     </div>
   );

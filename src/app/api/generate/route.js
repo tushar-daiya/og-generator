@@ -1,10 +1,15 @@
 import { getLines } from "@/app/utils/linesWrap";
+import crypto from "crypto";
+import { put } from "@vercel/blob";
 import { loadImage } from "canvas";
 import { createCanvas } from "canvas";
-import fs from "fs";
 export async function POST(req, res) {
   try {
-    const { id, title, desc, author, image } = await req.json();
+    const {  title, description, author, image } = await req.json();
+    if (!title || !description || !author) {
+      return new Response("Missing required fields", { status: 400 });
+    }
+    const id=crypto.randomUUID();
     const canvas = createCanvas(1200, 630);
     const ctx = canvas.getContext("2d");
     const bgColor = "#fff";
@@ -27,21 +32,21 @@ export async function POST(req, res) {
       ctx.font = `bold ${headingSize}px , sans-serif`;
       ctx.fillStyle = textColor;
       const lines = getLines(ctx, title, maxWidth, maxHeadingLines);
-      let y = 40 + 100 + headingSize + lineHeight; // Starting y position for the title
+      let y = 40 + 100 + headingSize + lineHeight;
       lines.forEach((line) => {
         ctx.fillText(line, 50, y);
         y += headingSize + lineHeight;
       });
       ctx.font = `normal ${descSize}px , sans-serif`;
       ctx.fillStyle = textColor;
-      const descLines = getLines(ctx, desc, maxWidth, maxDescLines);
+      const descLines = getLines(ctx, description, maxWidth, maxDescLines);
       y =
         40 +
         100 +
         lines.length * (headingSize + lineHeight) +
         descSize +
         lineHeight +
-        20; // Starting y position for the description
+        20;
       descLines.forEach((line) => {
         ctx.fillText(line, 50, y);
         y += descSize + lineHeight;
@@ -76,15 +81,12 @@ export async function POST(req, res) {
 
     const logo = await loadImage("./src/assets/logo.png");
     ctx.drawImage(logo, 1050, 40, 100, 100);
-    const out = fs.createWriteStream(`./public/opengraph/${id}.png`);
-    const stream = canvas.createPNGStream();
-    stream.pipe(out);
-    out.on("finish", () => {
-      return new Response(JSON.stringify({ message: "ok" }));
+    const blob = await put(`opengraph/${id}.png`, canvas.toBuffer(), {
+      access: "public",
     });
-    return new Response(JSON.stringify({ message: "something wrong" }));
+    return new Response(blob.url, { status: 200 });
   } catch (error) {
     console.log(error);
-    return new Response(JSON.stringify({ message: "something wrong" }));
+    return new Response("Something went wrong", { status: 500 });
   }
 }
