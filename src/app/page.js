@@ -1,10 +1,14 @@
 import CreateBlogForm from "../components/CreateBlogForm";
 import BlogList from "../components/BlogList";
+import { Suspense } from 'react';
+
 export default function Home() {
   return (
     <div className="flex mx-10 h-screen">
       <div className="w-[48%] px-10 py-10 border-r border-gray-300 overflow-y-scroll">
-        <BlogList />
+        <Suspense fallback={<div>Loading blogs...</div>}>
+          <BlogList />
+        </Suspense>
       </div>
       <div className="w-[48%] px-10 max-w-xl mx-auto flex flex-col justify-center">
         <CreateBlogForm />

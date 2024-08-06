@@ -1,17 +1,27 @@
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 import React from "react";
+
 async function getBlogs() {
-  const blogs = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs`, {
-    method: "GET",
-    next: {
-      tags: ["blogs"],
-    },
-  });
-  return await blogs.json();
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs`, {
+      method: "GET",
+      next: {
+        tags: ["blogs"],
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch blogs:", error);
+    return [];
+  }
 }
+
 export default async function BlogList() {
   const blogs = await getBlogs();
+
   return (
     <>
       <h1 className="text-4xl font-bold">Latest Blogs</h1>

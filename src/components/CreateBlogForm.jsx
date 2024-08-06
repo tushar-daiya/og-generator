@@ -4,52 +4,45 @@ import { toast } from "sonner";
 
 export default function CreateBlogForm() {
   const formRef = useRef();
+
   const handleFormSubmit = async (formData) => {
-    const title = formData.get("title");
-    const description = formData.get("description");
-    const author = formData.get("author");
-    let image = formData.get("image");
-    if (image && image.size == 0) {
-      image = null;
-    }
-    console.log(image);
-    if (image && image.size > 1024 * 1024) {
-      throw new Error("Image size should be less than 1MB");
-    }
-    if (image && image.type !== "image/png") {
-      throw new Error("Image should be png");
-    }
-    if (!title) {
-      throw new Error("Title is required");
-    }
-    if (!description) {
-      throw new Error("Description is required");
-    }
-    if (!author) {
-      throw new Error("Author is required");
-    }
-    if (description.length < 50) {
-      throw new Error("Description should be at least 50 characters");
-    }
     try {
-      const blog = await fetch(
+      const title = formData.get("title");
+      const description = formData.get("description");
+      const author = formData.get("author");
+      let image = formData.get("image");
+
+      if (!title) throw new Error("Title is required");
+      if (!description) throw new Error("Description is required");
+      if (!author) throw new Error("Author is required");
+      if (description.length < 50)
+        throw new Error("Description should be at least 50 characters");
+
+      if (image && image.size > 0) {
+        if (image.size > 1024 * 1024)
+          throw new Error("Image size should be less than 1MB");
+        if (image.type !== "image/png") throw new Error("Image should be png");
+      } else {
+        formData.delete("image");
+      }
+
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/createblog`,
         {
           method: "POST",
           body: formData,
         }
       );
-      if (blog.status != 200) {
-        throw new Error("Something went wrong");
-      }
+
+      if (!response.ok) throw new Error("Failed to create blog");
+
       formRef.current.reset();
-      return {
-        message: "Blog created successfully",
-      };
+      return { message: "Blog created successfully" };
     } catch (error) {
-      throw new Error("Something went wrong");
+      throw new Error(error.message || "Something went wrong");
     }
   };
+
   return (
     <>
       <h1 className="text-4xl font-bold">Create new Blog</h1>
