@@ -3,13 +3,14 @@ import crypto from "crypto";
 import { put } from "@vercel/blob";
 import { loadImage } from "canvas";
 import { createCanvas } from "canvas";
+export const runtime = "edge";
 export async function POST(req, res) {
   try {
-    const {  title, description, author, image } = await req.json();
+    const { title, description, author, image } = await req.json();
     if (!title || !description || !author) {
       return new Response("Missing required fields", { status: 400 });
     }
-    const id=crypto.randomUUID();
+    const id = crypto.randomUUID();
     const canvas = createCanvas(1200, 630);
     const ctx = canvas.getContext("2d");
     const bgColor = "#fff";

@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-
+export const runtime = "edge";
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
   try {

@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { put } from "@vercel/blob";
 import crypto from "crypto";
 import { revalidateTag } from "next/cache";
+export const runtime = "edge";
 export async function POST(request) {
   const formData = await request.formData();
   const title = formData.get("title");
