@@ -15,7 +15,7 @@ export async function POST(req, res) {
     const avatarPath = path.resolve(process.cwd(), "public/avatar.png");
     const poppins = path.resolve(process.cwd(), "public/Poppins-Regular.ttf");
     const poppinsBold = path.resolve(process.cwd(), "public/Poppins-Bold.ttf");
-    registerFont(poppins, { family: "Poppins" });
+    registerFont(poppins, { family: "Poppins", weight: "normal" });
     registerFont(poppinsBold, { family: "Poppins", weight: "bold" });
     const id = crypto.randomUUID();
     const canvas = createCanvas(1200, 630);
